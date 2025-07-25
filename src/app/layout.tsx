@@ -5,29 +5,51 @@ import { CartProvider } from "@/lib/cart-context";
 import Cart from "@/components/Cart";
 
 const inter = Inter({
-  subsets: ["latin"],
   variable: "--font-inter",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "CluelessFitness - Premium Athletic Wear",
-  description: "Discover premium athletic wear and fitness apparel designed for peak performance. Shop our exclusive collection of t-shirts, hoodies, and more.",
-  keywords: "fitness apparel, athletic wear, t-shirts, hoodies, workout clothes, CluelessFitness",
-  openGraph: {
-    title: "CluelessFitness - Premium Athletic Wear",
-    description: "Discover premium athletic wear and fitness apparel designed for peak performance.",
-    url: process.env.NEXT_PUBLIC_SITE_URL,
-    siteName: "CluelessFitness",
-    locale: "en_GB",
-    type: "website",
+  title: "CluelessFitness - No Excuses. Just Results.",
+  description: "Gear for those who refuse to quit. When others make excuses, you make progress. Motivational athletic wear that fuels your grind and reminds you that average is not an option.",
+  keywords: ["fitness apparel", "motivational clothing", "athletic wear", "workout gear", "gym clothing", "no excuses", "relentless mindset", "CluelessFitness"],
+  authors: [{ name: "CluelessFitness" }],
+  creator: "CluelessFitness",
+  publisher: "CluelessFitness",
+  robots: {
+    index: true,
+    follow: true,
   },
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    url: "https://clueless-fitness-5fhs.vercel.app",
+    siteName: "CluelessFitness",
+    title: "CluelessFitness - No Excuses. Just Results.",
+    description: "Gear for those who refuse to quit. When others make excuses, you make progress. Wear your dedication, fuel your grind.",
+    images: [
+      {
+        url: "/teefront2.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "CluelessFitness - Motivational Athletic Wear",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CluelessFitness - No Excuses. Just Results.",
+    description: "Gear for those who refuse to quit. When others make excuses, you make progress. Wear your dedication, fuel your grind.",
+    images: ["/teefront2.jpeg"],
+  },
+  metadataBase: new URL("https://clueless-fitness-5fhs.vercel.app"),
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={`${inter.variable} font-inter antialiased bg-white text-gray-900`}>
