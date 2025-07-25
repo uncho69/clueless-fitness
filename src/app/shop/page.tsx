@@ -46,7 +46,7 @@ export default function ShopPage() {
                 Shop Collection
               </h1>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Discover our premium athletic wear designed for peak performance and style.
+                Gear for those who refuse to quit. When others make excuses, you make progress. Wear your dedication, fuel your grind.
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function ShopPage() {
                     Coming Soon
                   </h3>
                   <p className="text-gray-400 text-sm">
-                    More motivational designs on the way
+                    More relentless designs dropping soon
                   </p>
                 </div>
               ))}
@@ -133,10 +133,10 @@ export default function ShopPage() {
         <section className="bg-gray-50 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Stay Motivated
+              Stay Relentless
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Be the first to know about new motivational releases, exclusive offers, and fitness inspiration.
+              Get first access to new drops, exclusive motivation, and gear that fuels your grind. No excuses, just results.
             </p>
             <div className="max-w-md mx-auto">
               <div className="flex gap-4">
