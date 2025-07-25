@@ -1,44 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GelatoAPI } from '@/lib/gelato';
-import { GelatoOrder } from '@/types/product';
 
 export async function POST(request: NextRequest) {
   try {
-    const orderData: GelatoOrder = await request.json();
-
-    // Validate required fields
-    if (!orderData.orderReferenceId || !orderData.orderItems || !orderData.shippingAddress) {
-      return NextResponse.json(
-        { error: 'Missing required order fields' },
-        { status: 400 }
-      );
-    }
-
+    const orderData = await request.json();
+    
     // Create order with Gelato
     const gelatoResponse = await GelatoAPI.createOrder(orderData);
-
-    // Log the order for debugging
-    console.log('Order created successfully:', {
-      orderReference: orderData.orderReferenceId,
-      gelatoOrderId: gelatoResponse.id,
-      items: orderData.orderItems.length,
-    });
-
+    
+    // Return order confirmation
     return NextResponse.json({
       success: true,
+      orderId: gelatoResponse.id,
       orderReference: orderData.orderReferenceId,
       gelatoOrderId: gelatoResponse.id,
-      estimatedDelivery: gelatoResponse.estimatedDelivery,
-      trackingInfo: gelatoResponse.tracking,
+      checkoutUrl: gelatoResponse.checkoutUrl,
+      status: gelatoResponse.status || 'pending',
+      totalPrice: gelatoResponse.totalPrice,
+      currency: gelatoResponse.currency || 'GBP',
     });
 
   } catch (error) {
-    console.error('Error processing order:', error);
+    console.error('Order creation error:', error);
     
     return NextResponse.json(
       { 
-        error: 'Failed to process order',
-        message: error instanceof Error ? error.message : 'Unknown error'
+        success: false,
+        error: 'Failed to create order',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );
@@ -46,28 +35,28 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const orderReference = searchParams.get('orderReference');
+  const { searchParams } = new URL(request.url);
+  const orderId = searchParams.get('orderId');
 
-  if (!orderReference) {
+  if (!orderId) {
     return NextResponse.json(
-      { error: 'Order reference is required' },
+      { error: 'Order ID is required' },
       { status: 400 }
     );
   }
 
   try {
-    // Here you would typically fetch order status from your database
-    // and/or check with Gelato for order updates
-    
+    // In a real app, you would fetch order status from your database
+    // For now, return a mock response
     return NextResponse.json({
-      orderReference,
+      orderId,
       status: 'processing',
-      message: 'Your order is being processed and will be shipped soon.',
+      trackingNumber: null,
+      estimatedDelivery: null,
     });
 
   } catch (error) {
-    console.error('Error fetching order:', error);
+    console.error('Order status fetch error:', error);
     
     return NextResponse.json(
       { error: 'Failed to fetch order status' },

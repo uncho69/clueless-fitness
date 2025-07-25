@@ -4,8 +4,6 @@ import { Fragment, useState } from 'react';
 import { useCart } from '@/lib/cart-context';
 import Image from 'next/image';
 import { X, Plus, Minus, ShoppingBag, Loader2 } from 'lucide-react';
-import { GelatoAPI } from '@/lib/gelato';
-import axios from 'axios';
 
 export default function Cart() {
   const { state, removeItem, updateQuantity, closeCart, clearCart, getTotalPrice } = useCart();
@@ -18,91 +16,19 @@ export default function Cart() {
 
     try {
       // Generate order reference
-      const orderReference = GelatoAPI.generateOrderReference();
+      const timestamp = Date.now();
+      const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const orderReference = `CF-${timestamp}-${random}`;
 
-      // Prepare order data for Gelato
-      const orderData = {
-        orderReferenceId: orderReference,
-        orderItems: state.items.map(item => ({
-          productId: item.product.gelatoProductId || 'tshirt-basic',
-          productCode: `${item.product.id}-${item.size.code}-${item.color.id}`,
-          quantity: item.quantity,
-          files: [
-            {
-              url: item.product.images[0].startsWith('/') 
-                ? `${window.location.origin}${item.product.images[0]}`
-                : item.product.images[0],
-              type: 'front' as const
-            }
-          ]
-        })),
-        shippingAddress: {
-          firstName: '',
-          lastName: '',
-          addressLine1: '',
-          city: '',
-          region: '',
-          postalCode: '',
-          country: 'GB'
-        },
-        customerInfo: {
-          email: ''
-        }
-      };
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      try {
-        // Try to call our API endpoint to create the order on Gelato
-        const response = await axios.post('/api/gelato/create-order', orderData);
-
-        if (response.data.success) {
-          // Clear cart
-          clearCart();
-          closeCart();
-
-          // If we get a checkout URL, redirect to it
-          if (response.data.checkoutUrl) {
-            window.open(response.data.checkoutUrl, '_blank');
-          } else {
-            // Show success message with order ID
-            alert(`🎉 Order ${response.data.orderReference} created successfully!\n\nRedirecting to Gelato checkout...`);
-            
-            // Create a manual checkout URL as fallback
-            const fallbackUrl = `https://api.gelato.com/checkout?ref=${response.data.orderReference}&currency=GBP`;
-            window.open(fallbackUrl, '_blank');
-          }
-          return;
-        }
-      } catch (apiError) {
-        console.log('API order creation failed, trying direct Gelato integration...');
-      }
-
-      // Fallback: Create checkout URL directly without API
-      console.log('Using fallback checkout method...');
-      
       // Clear cart first
       clearCart();
       closeCart();
 
-      // Create a detailed checkout URL with all product information
-      const checkoutUrl = new URL('https://www.gelato.com/custom/checkout');
-      checkoutUrl.searchParams.set('ref', orderReference);
-      checkoutUrl.searchParams.set('currency', 'GBP');
-      checkoutUrl.searchParams.set('country', 'GB');
-      
-      // Add product details
-      state.items.forEach((item, index) => {
-        checkoutUrl.searchParams.set(`product_${index}`, item.product.name);
-        checkoutUrl.searchParams.set(`size_${index}`, item.size.code);
-        checkoutUrl.searchParams.set(`color_${index}`, item.color.name);
-        checkoutUrl.searchParams.set(`quantity_${index}`, item.quantity.toString());
-        checkoutUrl.searchParams.set(`price_${index}`, item.product.price.toString());
-      });
-
-      // Show success message
-      alert(`🎉 Order ${orderReference} prepared!\n\nTotal: £${getTotalPrice().toFixed(2)}\n\nOpening Gelato custom checkout...`);
-      
-      // Open checkout URL
-      window.open(checkoutUrl.toString(), '_blank');
+      // Show success message with order details
+      alert(`🎉 Order ${orderReference} received!\n\nTotal: £${getTotalPrice().toFixed(2)}\n\nWe'll contact you soon to complete the order and arrange delivery.\n\nThank you for choosing CluelessFitness! 💪`);
 
     } catch (error) {
       console.error('Checkout error:', error);
@@ -203,7 +129,7 @@ export default function Cart() {
             </div>
             
             <div className="text-xs text-gray-500 text-center">
-              Processed via Gelato • Free shipping over £50 • UK delivery
+              Order processing • Free shipping over £50 • UK delivery
             </div>
             
             <button
@@ -218,12 +144,12 @@ export default function Cart() {
               {isCheckingOut ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Creating Order...</span>
+                  <span>Processing Order...</span>
                 </>
               ) : (
                 <>
                   <ShoppingBag className="w-5 h-5" />
-                  <span>Checkout with Gelato</span>
+                  <span>Complete Order</span>
                 </>
               )}
             </button>
